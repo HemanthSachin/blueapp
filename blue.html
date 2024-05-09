@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bluetooth Data Transfer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    button {
+      display: block;
+      margin-bottom: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bluetooth Data Transfer</h1>
+  <button id="sendDataButton">Send Data via Bluetooth</button>
+
+  <div id="output"></div>
+
+  <script>
+    const connectButton = document.getElementById('connectButton');
+    const sendDataButton = document.getElementById('sendDataButton');
+    const outputDiv = document.getElementById('output');
+
+    let bluetoothDevice;
+
+    // Request and connect to a Bluetooth device
+    connectButton.addEventListener('click', async () => {
+      try {
+        // Request access to nearby Bluetooth devices
+        bluetoothDevice = await navigator.bluetooth.requestDevice({
+          filters: [{ services: ['battery_service'] }]
+        });
+
+        // Connect to the selected Bluetooth device
+        const server = await bluetoothDevice.gatt.connect();
+
+        // Get the primary service of the Bluetooth device
+        const service = await server.getPrimaryService('battery_service');
+
+        // Get the characteristic to write data to
+        const characteristic = await service.getCharacteristic('battery_level');
+
+        outputDiv.textContent = 'Connected to Bluetooth device.';
+      } catch (error) {
+        outputDiv.textContent = 'Error connecting to Bluetooth device: ' + error;
+      }
+    });
+
+    // Send data via Bluetooth
+    sendDataButton.addEventListener('click', async () => {
+      try {
+        // Write data to the Bluetooth device
+        const data = new Uint8Array([0x01, 0x02, 0x03]); // Example data
+        await bluetoothDevice.gatt.getPrimaryService('battery_service')
+          .then(service => service.getCharacteristic('battery_level'))
+          .then(characteristic => characteristic.writeValue(data));
+
+        outputDiv.textContent = 'Data sent via Bluetooth.';
+      } catch (error) {
+        outputDiv.textContent = 'Error sending data via Bluetooth: ' + error;
+      }
+    });
+  </script>
+</body>
+</html>

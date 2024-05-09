@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <link rel="stylesheet" href="mobile.css">
+    
+</head>
+<body>
+    <nav class="navbar">
+		<div class="navdiv">
+			<div class="logo"><a href="#">Tarcin Robotic</a> </div>
+			<ul>
+				<button id="connectButton" style="color: white; font-size: larger;">Connect</button>
+			</ul>
+		</div>
+	</nav>
+			<div style="margin-left: 250px; margin-top: 250px;"><button id="up" style="background-color: #4a37f3; width: 120px; height: 120px; border-radius: 20px; color: white; font-size: xxx-large; ">U</button></div>
+      <div style="margin-left: 395px; margin-top: -20px;"><button id="right" style="background-color: #4a37f3; width: 120px; height: 120px; border-radius: 20px; margin-top: 50px; color: white; font-size: xxx-large; ">R</button></div>
+      <div style=" margin-left: 105px; margin-top: -100px;"><button id="left" style="background-color: #4a37f3; width: 120px; height: 120px; border-radius: 20px; color: white; font-size: xxx-large;">L</button></div>
+      <div style="margin-left: 250px; margin-top: 40px;"><button id="down" style="background-color: #4a37f3; width: 120px; height: 120px; border-radius: 20px;color: white; font-size: xxx-large;">D</button></div>
+    <div class="circle1">
+        <img src="circle.PNG" >
+    </div>
+    <div class="circle2">
+        <img src="circle.PNG" >
+    </div>
+    <div class="mic">
+        <img src="mic.PNG" >
+    </div>
+    <div class="sunrise">
+        <img src="sunrise.PNG" >
+    </div>
+    <div class="led">
+        <img src="led.png" >
+    </div>
+    <div class="text">Not Connected</div>
+    <script>
+        const connectButton = document.getElementById('connectButton');
+        const sendDataButton = document.getElementById('sendDataButton');
+        const outputDiv = document.getElementById('output');
+    
+        let bluetoothDevice;
+    
+        // Request and connect to a Bluetooth device
+        connectButton.addEventListener('click', async () => {
+          try {
+            // Request access to nearby Bluetooth devices
+            bluetoothDevice = await navigator.bluetooth.requestDevice({
+              filters: [{ services: ['battery_service'] }]
+            });
+    
+            // Connect to the selected Bluetooth device
+            const server = await bluetoothDevice.gatt.connect();
+    
+            // Get the primary service of the Bluetooth device
+            const service = await server.getPrimaryService('battery_service');
+    
+            // Get the characteristic to write data to
+            const characteristic = await service.getCharacteristic('battery_level');
+    
+            outputDiv.textContent = 'Connected to Bluetooth device.';
+          } catch (error) {
+            outputDiv.textContent = 'Error connecting to Bluetooth device: ' + error;
+          }
+        });
+    
+        // Send data via Bluetooth
+        up.addEventListener('click', async () => {
+          try {
+            // Write data to the Bluetooth device
+            const data =  '1'// Example data
+            await bluetoothDevice.gatt.getPrimaryService('battery_service')
+              .then(service => service.getCharacteristic('battery_level'))
+              .then(characteristic => characteristic.writeValue(data));
+          } catch (error) {
+            outputDiv.textContent = 'Error sending data via Bluetooth: ' + error;
+          }
+        });
+
+        right.addEventListener('click', async () => {
+          try {
+            // Write data to the Bluetooth device
+            const data =  '2'// Example data
+            await bluetoothDevice.gatt.getPrimaryService('battery_service')
+              .then(service => service.getCharacteristic('battery_level'))
+              .then(characteristic => characteristic.writeValue(data));
+          } catch (error) {
+            outputDiv.textContent = 'Error sending data via Bluetooth: ' + error;
+          }
+        });
+
+        left.addEventListener('click', async () => {
+          try {
+            // Write data to the Bluetooth device
+            const data =  '3'// Example data
+            await bluetoothDevice.gatt.getPrimaryService('battery_service')
+              .then(service => service.getCharacteristic('battery_level'))
+              .then(characteristic => characteristic.writeValue(data));
+          } catch (error) {
+            outputDiv.textContent = 'Error sending data via Bluetooth: ' + error;
+          }
+        });
+
+        down.addEventListener('click', async () => {
+          try {
+            // Write data to the Bluetooth device
+            const data =  '4'// Example data
+            await bluetoothDevice.gatt.getPrimaryService('battery_service')
+              .then(service => service.getCharacteristic('battery_level'))
+              .then(characteristic => characteristic.writeValue(data));
+          } catch (error) {
+            outputDiv.textContent = 'Error sending data via Bluetooth: ' + error;
+          }
+        });
+      </script>
+</body>
+</html>
